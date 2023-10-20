@@ -91,8 +91,9 @@ class InstagramService extends ContentController
 
                 foreach ($children as $child) {
                     $data['Children']->push(ArrayData::create([
-                        '`ID`' => $child['id'],
-                        'MediaSrc' => $child['media_url']
+                        'ID' => $child['id'],
+                        'MediaSrc' => $child['media_url'],
+                        'DefaultSize' => $this->config()->default_post_size
                     ]));
                 }
 
