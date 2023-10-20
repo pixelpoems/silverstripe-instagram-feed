@@ -1,0 +1,49 @@
+{
+    "name": "pixelpoems/silverstripe-instagram-feed",
+    "type": "silverstripe-vendormodule",
+    "description": "Silverstripe module that generates an instagram feed for a given user.",
+    "keywords": [
+        "silverstripe",
+        "instagram",
+        "element"
+    ],
+    "authors": [
+        {
+            "name": "Bettina Bröthaler",
+            "homepage": "https://www.pixelpoems.com/",
+            "role": "Lead Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.4 || ^8.0",
+        "silverstripe/cms": ">=4.0",
+        "silverstripe/framework": ">=4.0",
+        "silverstripe/vendor-plugin": ">=1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pixelpoems\\InstagramFeed\\": "src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "silverstripe/vendor-plugin": true
+        }
+    },
+    "extra": {
+        "installer-name": "silverstripe-instagram-feed",
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        },
+        "expose": [
+            "client/dist/"
+        ]
+    },
+    "license": "BSD-3-Clause"
+}

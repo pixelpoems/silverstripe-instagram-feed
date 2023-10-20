@@ -1,0 +1,9 @@
+de:
+  Pixelpoems\InstagramFeed\Elements\InstagramFeedElement:
+    SINGULARNAME: 'Instagram Feed'
+    PLURALNAME: 'Instagram Feeds'
+    db_DisplayCount: 'Anzahl'
+    DisplayCountDescription: 'Anzahl der Posts, die angezeigt werden (max. 25).'
+    db_ReducedDisplay: 'Reduzierte Anzeige'
+    ReducedDisplayDescription: 'Bei allen Beiträgen wird nur das erste Bild bzw. das Thumbnail-Bild (bei Videos) angezeigt.'
+    Display: Anzeige
