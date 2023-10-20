@@ -2,7 +2,7 @@
 <a class="instagram-post" href="$Link" target="_blank">
     <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
         <% loop $Children %>
-            <img src="$MediaSrc" height="250" width="250"/>
+            <img src="$MediaSrc" height="$DefaultSize" width="$DefaultSize"/>
         <% end_loop %>
     </div>
 </a>

@@ -36,6 +36,12 @@ INSTAGRAM_ACCESS_TOKEN=''
 
 If both variables are given, the yml variable will be used.
 
+Furthermore you can set a default size:
+```yml
+Pixelpoems\InstagramFeed\Services\InstagramService:
+    default_post_size: 250
+```
+
 ## Usage
 This module comes with a configured Instagram Feed Element (Usage with [DNA Elemental]()).
 If you want to use the feed somewhere else you can include the service like this:
@@ -64,6 +70,7 @@ public function getInstagramFeed(): ArrayList
 | `Caption`     | Caption of the Instagram Post                                                                                            |
 | `Timestamp`   | Timestamp of the Instagram Post                                                                                          |
 | `Children`    | Contains the information of the child elements [`ID`, `MediaSrc`]- only available for Media Type `CAROUSEL_ALBUM`        |
+| `DefaultSize` | Default Size of post `250`                                                                                               |
 
 ## External Requirement Setup
 ### Meta Developer App

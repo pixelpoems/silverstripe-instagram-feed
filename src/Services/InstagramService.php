@@ -19,6 +19,7 @@ class InstagramService extends ContentController
     private $path; // your path to save the token for auto update
     private $filename;  // your filename
     private bool $reducedDisplay = false;
+    private static int $default_post_size = 250;
 
     public function __construct($path = "ig_token", $filename = "updated.json")
     {
@@ -76,7 +77,8 @@ class InstagramService extends ContentController
             'Username' => $feedItem['username'],
             'MediaSrc' => $feedItem['media_url'],
             'Caption' => $feedItem['caption'],
-            'Timestamp' => $feedItem['timestamp']
+            'Timestamp' => $feedItem['timestamp'],
+            'DefaultSize' => $this->config()->default_post_size
         ];
 
         $baseTemplatePath = 'Pixelpoems\\InstagramFeed\\Posts\\';
