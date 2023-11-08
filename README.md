@@ -1,6 +1,15 @@
 # Silverstripe Instagram Feed Module
 [![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta)
 
+This module provides a service to get the latest posts from an instagram account.
+It also provides a DNA Elemental Element to display the feed.
+This is only a basic implementation and can be extended by your own needs.
+You need to provide an access token to use this module.
+To use this you need to create an instagram developer app and an instagram basic display api app.
+See [External Requirement Setup](#external-requirement-setup) for more information.
+It is necessary to use a public instagram account to use this module (it's a limitation of the instagram api).
+
+
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Configuration](#configuration)
@@ -16,6 +25,7 @@
 External Requirements:
 * Meta Developer App [(Instruction)](#meta-developer-app)
 * Instagram Basic Display API [(Instruction)](#instagram-basic-display-api)
+* Public Instagram Account
 
 ## Installation
 ```
@@ -23,7 +33,7 @@ composer require pixelpoems/silverstripe-instagram-feed
 ```
 
 ## Configuration
-You can add your instagram access token within a yml config:
+You can add your instagram access token (Follow [Instructions](#external-requirement-setup) to get the token) within a yml config:
 ```yml
 Pixelpoems\InstagramFeed\Services\InstagramService:
     instagram_access_token: ''
@@ -75,23 +85,59 @@ public function getInstagramFeed(): ArrayList
 ## External Requirement Setup
 ### Meta Developer App
 To use the **Instagram API** you have to create a **Meta App** first.
-1. Go to https://developers.facebook.com/apps/create/ and select Type "None".
+1. Go to https://developers.facebook.com/apps/create/ and select Type.
+
+![external-requirements-meta-1.png](resources%2Fexternal-requirements-meta-1.png)
+
+
 2. Provide your App details (Name and contact mail).
 3. Select "Instagram Basic Display" from the product list.
+
+![external-requirements-meta-3.png](resources%2Fexternal-requirements-meta-3.png)
+
+
 4. Scroll down until you see an alert and click on Settings to update your App settings.
-5. Select the platform Website.
+
+![external-requirements-meta-4.png](resources%2Fexternal-requirements-meta-4.png)
+
+5. Select the platform "Website".  (Scroll down to bottom to "Add Platform")
+
+![external-requirements-meta-5.png](resources%2Fexternal-requirements-meta-5.png)
+
 6. Enter your Site URL.
+
+![external-requirements-meta-6.png](resources%2Fexternal-requirements-meta-6.png)
 
 ### Instagram Basic Display API
 https://developers.facebook.com/docs/instagram-basic-display-api
 1. Open "Instagram Basic Display > Basic Display" on the product overview (left menu).
+
+![external-requirements-idapi-1.png](resources%2Fexternal-requirements-idapi-1.png)
+
 2. Click on "Create New App".
+
 3. Fill OAuth Redirect, Deauthorize Callback and Data Deletion Request URL with your site URL.
+
+![external-requirements-idapi-3.png](resources%2Fexternal-requirements-idapi-3.png)
+
 4. Add Instagram testers.
+
+![external-requirements-idapi-4.png](resources%2Fexternal-requirements-idapi-4.png)
+
+![external-requirements-idapi-4-2.png](resources%2Fexternal-requirements-idapi-4-2.png)
+
 5. Enter your Instagram username and select your profile.
+
+![external-requirements-idapi-5.png](resources%2Fexternal-requirements-idapi-5.png)
+
 6. Go to your Instagram account settings page > App and Websites > Tester invites, accept the invite.
+   [https://www.instagram.com/accounts/manage_access/](https://www.instagram.com/accounts/manage_access/)
+
 7. Back to Products > Instagram > Basic Display > User Token Generator, you Instagram account should appear in the list, then click Generate Token button for authorize and generate long-lived access token for Instagram.
-8. Login and authorize the App.
+
+![external-requirements-idapi-7.png](resources%2Fexternal-requirements-idapi-7.png)
+
+9. Login and authorize the App.
 9. Copy generated Token.
 10. Use this token within your yml config or your .env configuration (see [Configuration](#configuration)).
 
