@@ -2,6 +2,7 @@
 
 namespace Pixelpoems\InstagramFeed\Services;
 
+use Dompdf\Exception;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Environment;
@@ -50,9 +51,15 @@ class InstagramService extends ContentController
     {
         // https://developers.facebook.com/docs/instagram-basic-display-api/reference/media#fields
         $fields = ['id' ,'username','permalink','timestamp','caption','media_type','media_url','thumbnail_url'];
-        $this->refreshToken();
-        $instagramFeed = $this->getGraphEndpoint('me/media', $fields);
 
+        try {
+            $this->refreshToken();
+            $instagramFeed = $this->getGraphEndpoint('me/media', $fields);
+        } catch (\Exception $e) {
+            user_error('Instagram Feed could not be loaded. Please check your Instagram Access Token!', E_USER_WARNING);
+        }
+
+        if(!$instagramFeed) return ArrayList::create();
         if ($limit) {
             $instagramFeed = array_slice($instagramFeed, 0, $limit);
         }
@@ -142,7 +149,7 @@ class InstagramService extends ContentController
         }
     }
 
-    private function getGraphEndpoint($param = '', $fields = [], $endParam = ''): array
+    private function getGraphEndpoint($param = '', $fields = [], $endParam = ''): ?array
     {
         $url =  "https://graph.instagram.com/";
         if ($param) {
@@ -165,10 +172,17 @@ class InstagramService extends ContentController
 
     protected function request($path)
     {
-        $result = json_decode(file_get_contents($path), true);
-        if (isset($result['data'])) {
-            return $result['data'];
+        try {
+            $data = @file_get_contents($path);
+            $result = json_decode($data, true);
+            if (isset($result['data'])) {
+                return $result['data'];
+            }
+            return $result;
+        } catch (\Exception $e) {
+            throw new Exception('Instagram Feed could not be loaded. Please check your Instagram Access Token!', E_USER_WARNING);
         }
-        return $result;
+
+        return null;
     }
 }
