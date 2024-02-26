@@ -2,6 +2,7 @@
 
 namespace Pixelpoems\InstagramFeed\Services;
 
+use Dompdf\Exception;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Environment;
@@ -20,6 +21,7 @@ class InstagramService extends ContentController
     private $filename;  // your filename
     private bool $reducedDisplay = false;
     private static int $default_post_size = 250;
+    private $error = null;
 
     public function __construct($path = "ig_token", $filename = "updated.json")
     {
@@ -36,6 +38,31 @@ class InstagramService extends ContentController
         return $this->config()->instagram_access_token ?: Environment::getEnv('INSTAGRAM_ACCESS_TOKEN');
     }
 
+    private function setError($error = null)
+    {
+        $this->error = $error;
+    }
+
+    private function getError()
+    {
+        return $this->error;
+    }
+
+    public function getErrorDescription($render = false)
+    {
+        if(!$this->getError()) return null;
+        if(!$render) return $this->getError();
+        return $this->customise([
+            'Error' => $this->getError()
+        ])->renderWith('Pixelpoems\\InstagramFeed\\Includes\\MetaError');
+    }
+
+    public function checkOnErrors()
+    {
+        $this->getFeed(1);
+        return $this->getError() ? true : false;
+    }
+
     /**
      * All posts will only display the first image or (video) the thumbnail-image. The images will be displayed as Grid.
      * @param bool $reducedDisplay
@@ -50,9 +77,18 @@ class InstagramService extends ContentController
     {
         // https://developers.facebook.com/docs/instagram-basic-display-api/reference/media#fields
         $fields = ['id' ,'username','permalink','timestamp','caption','media_type','media_url','thumbnail_url'];
-        $this->refreshToken();
-        $instagramFeed = $this->getGraphEndpoint('me/media', $fields);
 
+        try {
+            $this->refreshToken();
+            $instagramFeed = $this->getGraphEndpoint('me/media', $fields);
+        } catch (\Exception $e) {
+            $this->setError($e->getMessage());
+        }
+
+        if($instagramFeed->error) {
+            $this->setError($instagramFeed->error->message);
+        }
+        if(!$instagramFeed || $this->getError()) return ArrayList::create();
         if ($limit) {
             $instagramFeed = array_slice($instagramFeed, 0, $limit);
         }
@@ -131,7 +167,16 @@ class InstagramService extends ContentController
             fclose($fp);
         }
 
-        $date_json = $this->request("$path/$filename")["updated"];
+        $date_json = null;
+        try {
+            $data = @file_get_contents("$path/$filename");
+            $result = json_decode($data, true);
+            if (isset($result['data'])) {
+                $date_json = $result['data']["updated"];
+            }
+        } catch (\Exception $e) {
+            throw new Exception('Instagram Feed could not be loaded. Please check your Instagram Access Token!', E_USER_WARNING);
+        }
 
         if (strtotime($date) - strtotime($date_json) > 86400) {
             $this->getGraphEndpoint('refresh_access_token', null, '&grant_type=ig_refresh_token');
@@ -142,7 +187,7 @@ class InstagramService extends ContentController
         }
     }
 
-    private function getGraphEndpoint($param = '', $fields = [], $endParam = ''): array
+    private function getGraphEndpoint($param = '', $fields = [], $endParam = '')
     {
         $url =  "https://graph.instagram.com/";
         if ($param) {
@@ -163,12 +208,19 @@ class InstagramService extends ContentController
         return $this->request($url);
     }
 
-    protected function request($path)
+    protected function request($url)
     {
-        $result = json_decode(file_get_contents($path), true);
-        if (isset($result['data'])) {
-            return $result['data'];
+        try {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            $result = curl_exec($ch);
+
+            curl_close($ch);
+
+            return json_decode($result);
+        } catch (\Exception $e) {
+            throw new Exception('Instagram Feed could not be loaded. Please check your Instagram Access Token!', E_USER_WARNING);
         }
-        return $result;
     }
 }
