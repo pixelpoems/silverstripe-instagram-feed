@@ -85,7 +85,7 @@ class InstagramService extends ContentController
             $this->setError($e->getMessage());
         }
 
-        if($instagramFeed->error) {
+        if(isset($instagramFeed->error)) {
             $this->setError($instagramFeed->error->message);
         }
         if(!$instagramFeed || $this->getError()) return ArrayList::create();
