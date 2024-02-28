@@ -26,7 +26,7 @@ class InstagramService extends ContentController
     public function __construct($path = "ig_token", $filename = "updated.json")
     {
         if (!$this->getToken()) {
-            user_error('You need to add an Instagram ACCESS TOKEN to connect your instagram feed!', E_USER_WARNING);
+            $this->setError('You need to add an Instagram ACCESS TOKEN to connect your instagram feed!');
         }
 
         $this->path = $path;
@@ -178,6 +178,7 @@ class InstagramService extends ContentController
             throw new Exception('Instagram Feed could not be loaded. Please check your Instagram Access Token!', E_USER_WARNING);
         }
 
+        if(!$date_json) return null;
         if (strtotime($date) - strtotime($date_json) > 86400) {
             $this->getGraphEndpoint('refresh_access_token', null, '&grant_type=ig_refresh_token');
             $array = ["updated" => $date];
@@ -189,6 +190,8 @@ class InstagramService extends ContentController
 
     private function getGraphEndpoint($param = '', $fields = [], $endParam = '')
     {
+        if(!$this->getToken()) return null;
+
         $url =  "https://graph.instagram.com/";
         if ($param) {
             $url = $url . $param;
