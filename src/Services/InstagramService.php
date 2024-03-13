@@ -89,8 +89,8 @@ class InstagramService extends ContentController
             $this->setError($instagramFeed->error->message);
         }
         if(!$instagramFeed || $this->getError()) return ArrayList::create();
-        if ($limit) {
-            $instagramFeed = array_slice($instagramFeed, 0, $limit);
+        if ($limit && $instagramFeed->data) {
+            $instagramFeed = array_slice($instagramFeed->data, 0, $limit);
         }
 
         $prepFeed = ArrayList::create();
@@ -104,16 +104,16 @@ class InstagramService extends ContentController
     // https://developers.facebook.com/docs/instagram-basic-display-api/reference/media
     private function getSinglePost($feedItem): DBHTMLText
     {
-        $mediaType = $feedItem['media_type'];
+        $mediaType = $feedItem->media_type;
         $data = [
-            'ID' => $feedItem['id'],
+            'ID' => $feedItem->id,
             'MediaType' => $mediaType,
-            'Link' => $feedItem['permalink'],
-            'ProfileLink' => 'https://www.instagram.com/' . $feedItem['username'],
-            'Username' => $feedItem['username'],
-            'MediaSrc' => $feedItem['media_url'],
-            'Caption' => $feedItem['caption'],
-            'Timestamp' => $feedItem['timestamp'],
+            'Link' => $feedItem->permalink,
+            'ProfileLink' => 'https://www.instagram.com/' . $feedItem->username,
+            'Username' => $feedItem->username,
+            'MediaSrc' => $feedItem->media_url,
+            'Caption' => $feedItem->caption,
+            'Timestamp' => $feedItem->timestamp,
             'DefaultSize' => $this->config()->default_post_size
         ];
 
@@ -122,13 +122,14 @@ class InstagramService extends ContentController
 
         switch ($mediaType) {
             case ('CAROUSEL_ALBUM'):
-                $children = $this->getGraphEndpoint($feedItem['id'] . '/children', ['id', 'timestamp', 'media_url']);
+                $children = $this->getGraphEndpoint($feedItem->id . '/children', ['id', 'timestamp', 'media_url']);
+                $children = $children->data;
                 $data['Children'] = ArrayList::create();
 
                 foreach ($children as $child) {
                     $data['Children']->push(ArrayData::create([
-                        'ID' => $child['id'],
-                        'MediaSrc' => $child['media_url'],
+                        'ID' => $child->id,
+                        'MediaSrc' => $child->media_url,
                         'DefaultSize' => $this->config()->default_post_size
                     ]));
                 }
@@ -137,8 +138,8 @@ class InstagramService extends ContentController
                 break;
 
             case ('VIDEO'):
-                $data['MediaSrc'] = $feedItem['thumbnail_url'];
-                $data['VideoSrc'] = $feedItem['media_url'];
+                $data['MediaSrc'] = $feedItem->thumbnail_url;
+                $data['VideoSrc'] = $feedItem->media_url;
                 if(!$this->reducedDisplay) $template = $baseTemplatePath . 'Video';
                 break;
 
@@ -224,12 +225,13 @@ class InstagramService extends ContentController
             $result = curl_exec($ch);
             curl_close($ch);
 
-            if(gettype($result) === 'string') {
-                $this->setError($result);
-                return;
+            if($decoded = json_decode($result)) {
+                return json_decode($result);
             }
 
-            return json_decode($result);
+            $this->setError($result);
+            return;
+
         } catch (\Exception $e) {
             throw new Exception('Instagram Feed could not be loaded. Please check your Instagram Access Token!', E_USER_WARNING);
         }
