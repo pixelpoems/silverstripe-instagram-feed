@@ -188,14 +188,21 @@ class InstagramService extends ContentController
         }
     }
 
+    /**
+     * This method is used to get the Instagram Graph API endpoint.
+     * Docs: https://developers.facebook.com/docs/instagram-basic-display-api/guides/getting-profiles-and-media
+     * @param $param
+     * @param $fields
+     * @param $endParam
+     * @return mixed|null
+     * @throws Exception
+     */
     private function getGraphEndpoint($param = '', $fields = [], $endParam = '')
     {
         if(!$this->getToken()) return null;
 
         $url =  "https://graph.instagram.com/";
-        if ($param) {
-            $url = $url . $param;
-        }
+        if ($param) $url = $url . $param;
 
         $url = $url . '?access_token=' . $this->getToken();
 
@@ -204,10 +211,7 @@ class InstagramService extends ContentController
             $url = $url . '&fields=' . $fields;
         }
 
-        if ($endParam) {
-            $url = $url . $endParam;
-        }
-
+        if ($endParam) $url = $url . $endParam;
         return $this->request($url);
     }
 
