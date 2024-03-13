@@ -222,8 +222,12 @@ class InstagramService extends ContentController
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
             $result = curl_exec($ch);
-
             curl_close($ch);
+
+            if(gettype($result) === 'string') {
+                $this->setError($result);
+                return;
+            }
 
             return json_decode($result);
         } catch (\Exception $e) {
