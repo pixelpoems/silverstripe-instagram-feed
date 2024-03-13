@@ -171,8 +171,8 @@ class InstagramService extends ContentController
         try {
             $data = @file_get_contents("$path/$filename");
             $result = json_decode($data, true);
-            if (isset($result['data'])) {
-                $date_json = $result['data']["updated"];
+            if (isset($result['updated'])) {
+                $date_json = $result["updated"];
             }
         } catch (\Exception $e) {
             throw new Exception('Instagram Feed could not be loaded. Please check your Instagram Access Token!', E_USER_WARNING);
