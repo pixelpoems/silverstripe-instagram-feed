@@ -12,6 +12,7 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\View\ArrayData;
+use TractorCow\Fluent\Model\Locale;
 
 class InstagramService extends ContentController
 {
@@ -38,6 +39,11 @@ class InstagramService extends ContentController
     private function getToken(): ?string
     {
         return $this->config()->instagram_access_token ?: Environment::getEnv('INSTAGRAM_ACCESS_TOKEN');
+    }
+
+    public function hasToken(): bool
+    {
+        return $this->getToken() ? true : false;
     }
 
     private function setError($error = null)
@@ -148,18 +154,17 @@ class InstagramService extends ContentController
         $this->getFeedUncached();
     }
 
-    protected function getCacheKey()
+    protected function getCacheKey(): string
     {
         $cacheKey = 'InstagramFeed';
-//        if(class_exists(Locale::class)) {
-//            $cacheKey .= Locale::getCurrentLocale()->getLocale();
-//        }
+        if(class_exists(Locale::class)) {
+            $cacheKey .= '-' . Locale::getCurrentLocale()->getLocale();
+        }
         return $cacheKey;
     }
 
     protected function getCacheFactory() {
-        $cache = Injector::inst()->get(CacheInterface::class . '.' . $this->getCacheKey());
-        return $cache;
+        return Injector::inst()->get(CacheInterface::class . '.InstagramFeed');
     }
 
     public function getFeedUncached(): ArrayList

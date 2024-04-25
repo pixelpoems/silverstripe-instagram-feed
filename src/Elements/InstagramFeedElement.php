@@ -67,6 +67,7 @@ class InstagramFeedElement extends BaseElement
 
     public function getIsVisible()
     {
+        if(!$this->instagramService->hasToken()) return false;
         return $this->getFeed()->count() > 0;
     }
 
@@ -85,6 +86,14 @@ class InstagramFeedElement extends BaseElement
     {
         $fields = parent::getCMSFields();
         $fields->removeByName(['DisplayCount', 'ReducedDisplay']);
+
+        if($this->instagramService->hasToken()) {
+            $tokenInfo = _t(self::class . '.TokenInfo', 'Token for the Instagram API is set.');
+
+            $fields->addFieldsToTab('Root.Main', [
+                LiteralField::create('FeedErrorInfo', '<p class="message">' . $tokenInfo . '</p>')
+            ], 'Title');
+        }
 
         if($this->instagramService->checkOnErrors()) {
             $fields->addFieldsToTab('Root.Main', [
