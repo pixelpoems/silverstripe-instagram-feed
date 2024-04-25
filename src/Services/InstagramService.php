@@ -24,6 +24,9 @@ class InstagramService extends ContentController
     private $filename;  // your filename
     private bool $reducedDisplay = false;
     private static int $default_post_size = 250;
+
+    private static int $cache_time = 3600;
+
     private $error = null;
 
     public function __construct($path = "ig_token", $filename = "updated.json")
@@ -132,7 +135,7 @@ class InstagramService extends ContentController
     {
         $cache = $this->getCacheFactory();
         $feedStore = serialize($feed);
-        return $cache->set($this->getCacheKey(), $feedStore, 3600);
+        return $cache->set($this->getCacheKey(), $feedStore, self::$cache_time);
     }
 
     /**

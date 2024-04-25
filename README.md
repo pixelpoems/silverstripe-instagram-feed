@@ -36,7 +36,7 @@ composer require pixelpoems/silverstripe-instagram-feed
 You can add your instagram access token (Follow [Instructions](#external-requirement-setup) to get the token) within a yml config:
 ```yml
 Pixelpoems\InstagramFeed\Services\InstagramService:
-    instagram_access_token: ''
+  instagram_access_token: ''
 ```
 
 or you set a `.env` Variable:
@@ -49,7 +49,7 @@ If both variables are given, the yml variable will be used.
 Furthermore you can set a default size:
 ```yml
 Pixelpoems\InstagramFeed\Services\InstagramService:
-    default_post_size: 250
+  default_post_size: 250
 ```
 
 ## Usage
@@ -66,6 +66,15 @@ public function getInstagramFeed(): ArrayList
     return $service->getFeed($limit = 12);
 }
 ```
+
+## Caching
+The Instagram Feed is cached for 60 minutes by default to avoid reaching the rate limit of the Instagram API. [Rate Limiting](https://developers.facebook.com/docs/graph-api/overview/rate-limiting/)
+You can change the cache time by setting the cache time in the yml config:
+```yml
+Pixelpoems\InstagramFeed\Services\InstagramService:
+  cache_time: 3600 # seconds
+```
+
 
 ## The Instagram Post
 | Key           | Description                                                                                                              |
