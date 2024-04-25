@@ -1,0 +1,10 @@
+---
+Name: pp-instagram-feed
+---
+SilverStripe\Core\Injector\Injector:
+  Psr\SimpleCache\CacheInterface.InstagramFeed:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: "InstagramFeed"
+      defaultLifetime: 900
+

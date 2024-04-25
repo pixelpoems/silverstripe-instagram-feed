@@ -92,7 +92,6 @@ class InstagramFeedElement extends BaseElement
             ], 'Title');
         }
 
-
         $fields->addFieldsToTab('Root.Main', [
             NumericField::create('DisplayCount', $this->fieldLabel('DisplayCount'))
                 ->setDescription(_t(self::class . '.DisplayCountDescription', 'Count of Posts that will be displayed (Max. 25).')),
@@ -102,9 +101,11 @@ class InstagramFeedElement extends BaseElement
             )->setTitle(_t(self::class . '.Display', 'Display'))
         ]);
 
-
-
-
         return $fields;
+    }
+
+    public function onAfterWrite()
+    {
+        parent::onAfterWrite();
     }
 }

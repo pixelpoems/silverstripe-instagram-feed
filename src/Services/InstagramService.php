@@ -3,10 +3,12 @@
 namespace Pixelpoems\InstagramFeed\Services;
 
 use Dompdf\Exception;
+use Psr\SimpleCache\CacheInterface;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Environment;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\View\ArrayData;
@@ -75,6 +77,93 @@ class InstagramService extends ContentController
 
     public function getFeed($limit = null): ArrayList
     {
+        $feed = $this->getFeedCache($limit);
+        if(!$feed) {
+            $feed = $this->getFeedUncached();
+            $this->setFeedCache($feed);
+            return $this->getFeedCache($limit);
+        }
+        return $feed;
+    }
+
+    /**
+     * Get the feed from the cache. If there is no cache
+     * then return false.
+     *
+     * @return array
+     */
+    public function getFeedCache($limit = null) {
+        $cache = $this->getCacheFactory();
+        $feedStore = $cache->get($this->getCacheKey());
+        if (!$feedStore) {
+            return false;
+        }
+        $feed = unserialize($feedStore);
+        if (!$feed) {
+            return false;
+        }
+        return $feed->limit($limit);
+    }
+
+    /**
+     * Get the time() that the cache expires at.
+     *
+     * @return int
+     */
+    public function getFeedCacheExpiry() {
+        $cache = $this->getCacheFactory();
+        $metadata = $cache->getMetadatas($this->ID);
+        if ($metadata && isset($metadata['expire'])) {
+            return $metadata['expire'];
+        }
+        return false;
+    }
+
+    /**
+     * Set the cache.
+     */
+    public function setFeedCache(ArrayList $feed)
+    {
+        $cache = $this->getCacheFactory();
+        $feedStore = serialize($feed);
+        return $cache->set($this->getCacheKey(), $feedStore, 3600);
+    }
+
+    /**
+     * Clear the cache that holds this providers feed.
+     */
+    public function clearFeedCache()
+    {
+        $cache = $this->getCacheFactory();
+        $cache->delete($this->getCacheKey());
+    }
+
+    /**
+     * Refresh the cache.
+     * @return void
+     */
+    public function refreshCache(): void
+    {
+        $this->clearFeedCache();
+        $this->getFeedUncached();
+    }
+
+    protected function getCacheKey()
+    {
+        $cacheKey = 'InstagramFeed';
+//        if(class_exists(Locale::class)) {
+//            $cacheKey .= Locale::getCurrentLocale()->getLocale();
+//        }
+        return $cacheKey;
+    }
+
+    protected function getCacheFactory() {
+        $cache = Injector::inst()->get(CacheInterface::class . '.' . $this->getCacheKey());
+        return $cache;
+    }
+
+    public function getFeedUncached(): ArrayList
+    {
         // https://developers.facebook.com/docs/instagram-basic-display-api/reference/media#fields
         $fields = ['id' ,'username','permalink','timestamp','caption','media_type','media_url','thumbnail_url'];
 
@@ -89,12 +178,9 @@ class InstagramService extends ContentController
             $this->setError($instagramFeed->error->message);
         }
         if(!$instagramFeed || $this->getError()) return ArrayList::create();
-        if ($limit && $instagramFeed->data) {
-            $instagramFeed = array_slice($instagramFeed->data, 0, $limit);
-        }
 
         $prepFeed = ArrayList::create();
-        foreach ($instagramFeed as $value) {
+        foreach ($instagramFeed->data as $value) {
             $prepFeed->add($this->getSinglePost($value));
         }
 
