@@ -84,13 +84,14 @@ class InstagramService extends ContentController
         $this->reducedDisplay = $reducedDisplay;
     }
 
-    public function getFeed($limit = null): ArrayList
+    public function getFeed($limit = null): ?ArrayList
     {
         $feed = $this->getFeedCache($limit);
         if(!$feed) {
             $feed = $this->getFeedUncached();
             $this->setFeedCache($feed);
-            return $this->getFeedCache($limit);
+            if($feed->count()) return $this->getFeedCache($limit);
+            return ArrayList::create();
         }
         return $feed;
     }
@@ -133,6 +134,8 @@ class InstagramService extends ContentController
      */
     public function setFeedCache(ArrayList $feed)
     {
+        if(!$feed->count()) return; // No feed to cache
+
         $cache = $this->getCacheFactory();
         $feedStore = serialize($feed);
         return $cache->set($this->getCacheKey(), $feedStore, self::$cache_time);
