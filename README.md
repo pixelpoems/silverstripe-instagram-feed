@@ -46,7 +46,7 @@ INSTAGRAM_ACCESS_TOKEN=''
 
 If both variables are given, the yml variable will be used.
 
-Furthermore you can set a default size:
+Furthermore, you can set a default size:
 ```yml
 Pixelpoems\InstagramFeed\Services\InstagramService:
   default_post_size: 250
@@ -94,63 +94,41 @@ Pixelpoems\InstagramFeed\Services\InstagramService:
 ## External Requirement Setup
 ### Meta Developer App
 To use the **Instagram API** you have to create a **Meta App** first.
-1. Go to https://developers.facebook.com/apps/create/ and select Type.
+1. Go to https://developers.facebook.com/apps/create/ and select Type (Use "Business").
 
 ![external-requirements-meta-1.png](resources%2Fexternal-requirements-meta-1.png)
 
-
 2. Provide your App details (Name and contact mail).
-3. Select "Instagram Basic Display" from the product list.
+3. Select "Instagram" from the product list.
 
 ![external-requirements-meta-3.png](resources%2Fexternal-requirements-meta-3.png)
 
+### Instagram
+https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/
 
-4. Scroll down until you see an alert and click on Settings to update your App settings.
+1. Add Test User. Open "Instagram > App-Rollen > Rollen" on the product overview (left menu).
+![external-requirements-test-user.png](resources%2Fexternal-requirements-test-user.png)
+- Add User
+- Select Instagram-Tester
+- Search for your Instagram account and add it as tester.
+- Go to your Instagram account settings page > App and Websites > Tester invites, accept the invite.
+  [https://www.instagram.com/accounts/manage_access/](https://www.instagram.com/accounts/manage_access/)
 
-![external-requirements-meta-4.png](resources%2Fexternal-requirements-meta-4.png)
-
-5. Select the platform "Website".  (Scroll down to bottom to "Add Platform")
-
-![external-requirements-meta-5.png](resources%2Fexternal-requirements-meta-5.png)
-
-6. Enter your Site URL.
-
-![external-requirements-meta-6.png](resources%2Fexternal-requirements-meta-6.png)
-
-### Instagram Basic Display API
-https://developers.facebook.com/docs/instagram-basic-display-api
-1. Open "Instagram Basic Display > Basic Display" on the product overview (left menu).
-
-![external-requirements-idapi-1.png](resources%2Fexternal-requirements-idapi-1.png)
-
-2. Click on "Create New App".
-
-3. Fill OAuth Redirect, Deauthorize Callback and Data Deletion Request URL with your site URL.
 
 ![external-requirements-idapi-3.png](resources%2Fexternal-requirements-idapi-3.png)
 
-4. Add Instagram testers.
 
-![external-requirements-idapi-4.png](resources%2Fexternal-requirements-idapi-4.png)
+2. Back to "Products > Instagram > API-Einrichtung mit Instagram-Login" on the product overview (left menu).
+   ![external-requirements-idapi-1.png](resources%2Fexternal-requirements-idapi-1.png)
 
-![external-requirements-idapi-4-2.png](resources%2Fexternal-requirements-idapi-4-2.png)
+- Click on 1. User Token Generator, your Instagram account should appear in the list, then click "Generate Token" button for authorize and generate long-lived access token for Instagram. And copy the token.
 
-5. Enter your Instagram username and select your profile.
-
-![external-requirements-idapi-5.png](resources%2Fexternal-requirements-idapi-5.png)
-
-6. Go to your Instagram account settings page > App and Websites > Tester invites, accept the invite.
-   [https://www.instagram.com/accounts/manage_access/](https://www.instagram.com/accounts/manage_access/)
-
-7. Back to Products > Instagram > Basic Display > User Token Generator, you Instagram account should appear in the list, then click Generate Token button for authorize and generate long-lived access token for Instagram.
-
-![external-requirements-idapi-7.png](resources%2Fexternal-requirements-idapi-7.png)
-
-9. Login and authorize the App.
-9. Copy generated Token.
-10. Use this token within your yml config or your .env configuration (see [Configuration](#configuration)).
+3. Use this token within your yml config or your .env configuration or the yml setup (see [Configuration](#configuration)).
 
 
 ## Reporting Issues
 Please [create an issue](https://github.com/pixelpoems/silverstripe-instagram-feed/issues) for any bugs you've found, or
 features you're missing.
+
+## ToDos
+- [ ] Add option to set default_post_size as square
