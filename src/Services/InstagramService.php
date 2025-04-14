@@ -3,6 +3,7 @@
 namespace Pixelpoems\InstagramFeed\Services;
 
 use Dompdf\Exception;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\SimpleCache\CacheInterface;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\Core\Config\Configurable;
@@ -100,9 +101,13 @@ class InstagramService extends ContentController
      * Get the feed from the cache. If there is no cache
      * then return false.
      *
-     * @return array
+     * @return array|bool
+     * @throws NotFoundExceptionInterface
      */
-    public function getFeedCache($limit = null) {
+    public function getFeedCache($limit = null)
+    {
+        if($this->getError()) return false;
+
         $cache = $this->getCacheFactory();
         $feedStore = $cache->get($this->getCacheKey());
         if (!$feedStore) {
@@ -134,7 +139,7 @@ class InstagramService extends ContentController
      */
     public function setFeedCache(ArrayList $feed)
     {
-        if(!$feed->count()) return; // No feed to cache
+        if(!$feed->count() || $this->getError()) return; // No feed to cache
 
         $cache = $this->getCacheFactory();
         $feedStore = serialize($feed);
@@ -209,10 +214,12 @@ class InstagramService extends ContentController
             'ProfileLink' => 'https://www.instagram.com/' . $feedItem->username,
             'Username' => $feedItem->username,
             'MediaSrc' => $feedItem->media_url,
-            'Caption' => $feedItem->caption,
             'Timestamp' => $feedItem->timestamp,
             'DefaultSize' => $this->config()->default_post_size
         ];
+
+        // In case of no caption, we need to set the caption to null
+        if($feedItem->caption) $data['Caption'] = $feedItem->caption;
 
         $baseTemplatePath = 'Pixelpoems\\InstagramFeed\\Posts\\';
         $template = $baseTemplatePath . 'Image';
@@ -299,7 +306,7 @@ class InstagramService extends ContentController
     {
         if(!$this->getToken()) return null;
 
-        $url =  "https://graph.instagram.com/";
+        $url =  "https://graph.instagram.com/v22.0/";
         if ($param) $url = $url . $param;
 
         $url = $url . '?access_token=' . $this->getToken();
