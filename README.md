@@ -115,9 +115,6 @@ https://developers.facebook.com/docs/instagram-platform/instagram-api-with-insta
   [https://www.instagram.com/accounts/manage_access/](https://www.instagram.com/accounts/manage_access/)
 
 
-![external-requirements-idapi-3.png](resources%2Fexternal-requirements-idapi-3.png)
-
-
 2. Back to "Products > Instagram > API-Einrichtung mit Instagram-Login" on the product overview (left menu).
    ![external-requirements-idapi-1.png](resources%2Fexternal-requirements-idapi-1.png)
 
