@@ -27,10 +27,11 @@ class InstagramService extends ContentController
     private static int $default_post_size = 250;
 
     private static int $cache_time = 3600;
+    private $identifier; // used to identify the feed cache, e.g. 'p_1' for page with id 1
 
     private $error = null;
 
-    public function __construct($path = "ig_token", $filename = "updated.json")
+    public function __construct($identifier = 'default', $path = "ig_token", $filename = "updated.json")
     {
         if (!$this->getToken()) {
             $this->setError('You need to add an Instagram ACCESS TOKEN to connect your instagram feed!');
@@ -38,6 +39,7 @@ class InstagramService extends ContentController
 
         $this->path = $path;
         $this->filename = $filename;
+        $this->identifier = $identifier;
     }
 
     private function getToken(): ?string
@@ -171,6 +173,7 @@ class InstagramService extends ContentController
         if(class_exists(Locale::class)) {
             $cacheKey .= '-' . Locale::getCurrentLocale()->getLocale();
         }
+        $cacheKey .= '-' . $this->identifier;
         return $cacheKey;
     }
 

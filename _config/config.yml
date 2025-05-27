@@ -1,6 +1,10 @@
 ---
 Name: pp-instagram-feed
 ---
+PageController:
+  extensions:
+    - Pixelpoems\InstagramFeed\Extensions\PageControllerExtension
+
 SilverStripe\Core\Injector\Injector:
   Psr\SimpleCache\CacheInterface.InstagramFeed:
     factory: SilverStripe\Core\Cache\CacheFactory

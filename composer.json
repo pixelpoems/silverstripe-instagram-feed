@@ -9,7 +9,7 @@
     ],
     "authors": [
         {
-            "name": "Bettina Bröthaler",
+            "name": "Bettina Wagner-Löffler",
             "homepage": "https://www.pixelpoems.com/",
             "role": "Lead Developer"
         }
@@ -18,9 +18,9 @@
     "prefer-stable": true,
     "require": {
         "php": ">=7.4 || ^8.0",
-        "silverstripe/cms": ">=4.0",
-        "silverstripe/framework": ">=4.0",
-        "silverstripe/vendor-plugin": ">=1.0",
+        "silverstripe/cms": "^4.0",
+        "silverstripe/framework": "^4.0",
+        "silverstripe/vendor-plugin": "^1.0",
         "ext-curl": "*"
     },
     "require-dev": {

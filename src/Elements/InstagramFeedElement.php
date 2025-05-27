@@ -13,6 +13,10 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use Yizack\InstagramFeed;
 
+if (!class_exists(BaseElement::class)) {
+    return;
+}
+
 class InstagramFeedElement extends BaseElement
 {
     private static string $singular_name = 'Instagram Feed';
@@ -32,7 +36,7 @@ class InstagramFeedElement extends BaseElement
     public function __construct($record = [], $creationType = self::CREATE_OBJECT, $queryParams = [])
     {
         parent::__construct($record, $creationType, $queryParams);
-        $this->instagramService = InstagramService::create();
+        $this->instagramService = InstagramService::create('el_' . $this->ID);
     }
 
     protected function provideBlockSchema(): array
@@ -71,10 +75,10 @@ class InstagramFeedElement extends BaseElement
         return $this->getFeed()->count() > 0;
     }
 
-    public function getFeed(): ArrayList
+    public function getFeed($reducedDisplay = true, $displayCount = 4): ArrayList
     {
-        $this->instagramService->setReducedDisplay($this->ReducedDisplay);
-        return $this->instagramService->getFeed((int)$this->DisplayCount);
+        $this->instagramService->setReducedDisplay($reducedDisplay);
+        return $this->instagramService->getFeed((int)$displayCount);
     }
 
     public function getType(): string
@@ -111,6 +115,14 @@ class InstagramFeedElement extends BaseElement
         ]);
 
         return $fields;
+    }
+
+    public function onBeforeWrite()
+    {
+        // Make sure the cache is cleared when the element is saved
+        $this->instagramService->clearFeedCache();
+        parent::onBeforeWrite();
+
     }
 
     public function onAfterWrite()

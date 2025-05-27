@@ -67,6 +67,12 @@ public function getInstagramFeed(): ArrayList
 }
 ```
 
+If you want to use the feed within your templates without the Elemental module, you can include the feed directly in your template:
+```ss
+<% include Pixelpoems\InstagramFeed\Feed ReducedDisplay=false, DisplayCount=4 %>
+```
+The feed will be handled by the PageController, so you can use it in your templates without any additional code.
+
 ## Caching
 The Instagram Feed is cached for 60 minutes by default to avoid reaching the rate limit of the Instagram API. [Rate Limiting](https://developers.facebook.com/docs/graph-api/overview/rate-limiting/)
 You can change the cache time by setting the cache time in the yml config:
