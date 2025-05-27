@@ -75,10 +75,10 @@ class InstagramFeedElement extends BaseElement
         return $this->getFeed()->count() > 0;
     }
 
-    public function getFeed($reducedDisplay = true, $displayCount = 4): ArrayList
+    public function getFeed(): ArrayList
     {
-        $this->instagramService->setReducedDisplay($reducedDisplay);
-        return $this->instagramService->getFeed((int)$displayCount);
+        $this->instagramService->setReducedDisplay($this->ReducedDisplay);
+        return $this->instagramService->getFeed((int)$this->DisplayCount);
     }
 
     public function getType(): string

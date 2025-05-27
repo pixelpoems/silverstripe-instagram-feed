@@ -5,7 +5,7 @@ This module provides a service to get the latest posts from an instagram account
 It also provides a DNA Elemental Element to display the feed.
 This is only a basic implementation and can be extended by your own needs.
 You need to provide an access token to use this module.
-To use this you need to create an instagram developer app and an instagram basic display api app.
+To use this you need to create an instagram developer app and an instagram api app.
 See [External Requirement Setup](#external-requirement-setup) for more information.
 It is necessary to use a public instagram account to use this module (it's a limitation of the instagram api).
 
@@ -18,9 +18,8 @@ It is necessary to use a public instagram account to use this module (it's a lim
 
 ## Requirements
 
-* Silverstripe CMS >=4.0
-* Silverstripe Framework >=4.0
-* Versioned Admin >=1.0
+* Silverstripe CMS ^4.0 || ^5.0
+* Silverstripe Framework ^4.0 || ^5.0
 
 External Requirements:
 * Meta Developer App [(Instruction)](#meta-developer-app)
@@ -54,11 +53,12 @@ Pixelpoems\InstagramFeed\Services\InstagramService:
 
 ## Usage
 This module comes with a configured Instagram Feed Element (Usage with [DNA Elemental]()).
+
 If you want to use the feed somewhere else you can include the service like this:
 ```php
 public function getInstagramFeed(): ArrayList
 {
-    $service = InstagramService::create();
+    $service = InstagramService::create('page_' . $this->ID); // Make sure to use a unique identifier for the service for caching purposes
 
     // To use the reduced display which only renders images (no carousels or videos)
     $service->setReducedDisplay(true);
@@ -67,11 +67,10 @@ public function getInstagramFeed(): ArrayList
 }
 ```
 
-If you want to use the feed within your templates without the Elemental module, you can include the feed directly in your template:
+After that you can include the feed include in your template file:
 ```ss
-<% include Pixelpoems\InstagramFeed\Feed ReducedDisplay=false, DisplayCount=4 %>
+<% include Pixelpoems\InstagramFeed\Feed Feed=$InstagramFeed %>
 ```
-The feed will be handled by the PageController, so you can use it in your templates without any additional code.
 
 ## Caching
 The Instagram Feed is cached for 60 minutes by default to avoid reaching the rate limit of the Instagram API. [Rate Limiting](https://developers.facebook.com/docs/graph-api/overview/rate-limiting/)
