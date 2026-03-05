@@ -18,8 +18,7 @@ It is necessary to use a public instagram account to use this module (it's a lim
 
 ## Requirements
 
-* Silverstripe CMS ^4.0 || ^5.0
-* Silverstripe Framework ^4.0 || ^5.0
+* Silverstripe CMS ^6.0
 
 External Requirements:
 * Meta Developer App [(Instruction)](#meta-developer-app)

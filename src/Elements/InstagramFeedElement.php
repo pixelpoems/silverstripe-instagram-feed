@@ -1,17 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pixelpoems\InstagramFeed\Elements;
 
+use SilverStripe\Model\List\ArrayList;
 use DNADesign\Elemental\Models\BaseElement;
-use Instagram\Exception\InstagramDownloadException;
 use Pixelpoems\InstagramFeed\Services\InstagramService;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\NumericField;
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\DataObject;
-use Yizack\InstagramFeed;
 
 if (!class_exists(BaseElement::class)) {
     return;
@@ -25,13 +24,13 @@ class InstagramFeedElement extends BaseElement
 
     private static string $table_name = 'InstagramFeed_Element';
 
-    private static string $description = '';
+    private static string $class_description = '';
 
     private static string $icon = 'font-icon-block-instagram';
 
     private static bool $inline_editable = false;
 
-    protected $instagramService = null;
+    protected $instagramService;
 
     public function __construct($record = [], $creationType = self::CREATE_OBJECT, $queryParams = [])
     {
@@ -50,7 +49,7 @@ class InstagramFeedElement extends BaseElement
 
         $feedCount = $this->getFeed()->count();
 
-        if(!$feedCount) {
+        if($feedCount === 0) {
             $blockSchema['content'] = 'No Posts';
             return $blockSchema;
         }
@@ -71,13 +70,16 @@ class InstagramFeedElement extends BaseElement
 
     public function getIsVisible()
     {
-        if(!$this->instagramService->hasToken()) return false;
+        if (!$this->instagramService->hasToken()) {
+            return false;
+        }
+
         return $this->getFeed()->count() > 0;
     }
 
     public function getFeed(): ArrayList
     {
-        $this->instagramService->setReducedDisplay($this->ReducedDisplay);
+        $this->instagramService->setReducedDisplay((bool)$this->ReducedDisplay);
         return $this->instagramService->getFeed((int)$this->DisplayCount);
     }
 
@@ -117,7 +119,7 @@ class InstagramFeedElement extends BaseElement
         return $fields;
     }
 
-    public function onBeforeWrite()
+    protected function onBeforeWrite()
     {
         // Make sure the cache is cleared when the element is saved
         $this->instagramService->clearFeedCache();
@@ -125,7 +127,7 @@ class InstagramFeedElement extends BaseElement
 
     }
 
-    public function onAfterWrite()
+    protected function onAfterWrite()
     {
         parent::onAfterWrite();
     }
